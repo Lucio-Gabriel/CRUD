@@ -20,9 +20,6 @@ if($id){
     if($sql->rowCount() > 0){
 
         $info = $sql->fetch( PDO::FETCH_ASSOC );
-
-
-
     }
     else{
         header("Location: index.php");

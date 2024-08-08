@@ -31,7 +31,7 @@ $sql = $pdo->query("SELECT * FROM usuarios");
             <td>
                 <!-- fazendo referencia de  ID pra saber quem vou excluir -->
                 <a href="editar.php?id=<?=$usuario['id'];?>">[ Editar ]</a>
-                <a href="editar.phpid=<?=$usuario['id'];?>">[ Excluir ]</a>
+                <a href="excluir.php?id=<?=$usuario['id'];?>" onclick="return confirm('Tem certeza que deseja deletar?')">[ Excluir ]</a>
             </td>
         </tr>
     <?php endforeach; ?>
