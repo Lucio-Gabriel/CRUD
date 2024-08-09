@@ -1,13 +1,11 @@
 <?php
 require ('config.php');
+require 'dao/UsuarioDAOMySQL.php';
 
-$lista = [];
-// pegando os usuarios
-$sql = $pdo->query("SELECT * FROM usuarios");
- // verificando se existir usuarios
- if($sql->rowCount() > 0){
-   $lista = $sql->fetchAll(PDO::FETCH_ASSOC); // gerando uma lista e fazendo associação de campos
- }
+// Instancia
+$usuarioDao = new UsuarioDaoMysql($pdo);
+// pegando lista de usuarios
+$lista = $usuarioDao->findAll();
 ?>
 
 <!-- Tela de usuário -->
@@ -25,13 +23,13 @@ $sql = $pdo->query("SELECT * FROM usuarios");
     <!-- // verificando se existir usuarios -->
     <?php foreach($lista as $usuario): ?>
         <tr>
-            <td><?=$usuario['id'];?></td>
-            <td><?=$usuario['nome'];?></td>
-            <td><?=$usuario['email'];?></td>
+            <td><?=$usuario->getId();?></td>
+            <td><?=$usuario->getNome();?></td>
+            <td><?=$usuario->getEmail();?></td>
             <td>
                 <!-- fazendo referencia de  ID pra saber quem vou excluir -->
-                <a href="editar.php?id=<?=$usuario['id'];?>">[ Editar ]</a>
-                <a href="excluir.php?id=<?=$usuario['id'];?>" onclick="return confirm('Tem certeza que deseja deletar?')">[ Excluir ]</a>
+                <a href="editar.php?id=<?=$usuario->getId();?>">[ Editar ]</a>
+                <a href="excluir.php?id=<?=$usuario->getId();?>" onclick="return confirm('Tem certeza que deseja deletar?')">[ Excluir ]</a>
             </td>
         </tr>
     <?php endforeach; ?>
