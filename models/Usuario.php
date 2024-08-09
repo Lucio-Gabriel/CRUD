@@ -33,6 +33,7 @@ class Usuario{
 interface UsuarioDAO {
     public function add(Usuario $u); // creat
     public function findAll(); // Retorna uma lista com varios objetos da class obj
+    public function findByEmail($email); // Buscando usuario por email
     public function findById($id); // Estou procurando pelo ID
     public function update(Usuario $u); //noosso update para manibular
     public function delete($id); //Deleta por ID 

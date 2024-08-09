@@ -13,7 +13,14 @@ class UsuarioDaoMysql implements UsuarioDAO{
     }
 
     public function add(Usuario $u){
+        $sql = $this->pdo->prepare("INSERT INTO usuarios (nome, email) VALUES (:nome, :email)");
+        $sql->bindValue(':nome', $u->getNome());
+        $sql->bindValue(':email', $u->getEmail());
+        $sql->execute();
 
+        // pegando meu ID
+        $u->setId( $this->pdo->lastInsertId() );
+        return $u;
     } // creat
     public function findAll(){
         $array = [];
@@ -34,6 +41,28 @@ class UsuarioDaoMysql implements UsuarioDAO{
 
         return $array;
     } // Retorna uma lista com varios objetos da class obj
+
+    public function findByEmail($email)
+    {
+        $sql = $this->pdo->prepare("SELECT * FROM usuarios WHERE email =:email");
+        $sql->bindValue(':email', $email);
+        $sql->execute();
+        if($sql->rowCount() > 0){
+            $data = $sql->fetchAll();
+
+            // instanciado o objeto
+            $u = new Usuario();
+            $u->setId($data['id']);
+            $u->setNome($data['nome']);
+            $u->setEmail($data['email']);
+
+            return $u;
+        }else{
+            return false;
+        }
+
+    }
+
     public function findById($id){
 
     } // Estou procurando pelo ID

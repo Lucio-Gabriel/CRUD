@@ -1,6 +1,10 @@
 <?php
 
 require 'config.php';
+require 'dao/UsuarioDAOMySQL.php';
+
+// Instancia
+$usuarioDao = new UsuarioDaoMysql($pdo);
 
 // filtrando e pegando os valores dos meus inputs
 $name = filter_input(INPUT_POST, 'name');
@@ -9,24 +13,18 @@ $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
 // fazendo as verificações se os campos estão todos preenchidos
 if( $name && $email ){
 
-    // verificando no banco se existi registro de emails iguais
-    $sql = $pdo->prepare("SELECT * FROM usuarios WHERE email = :email");
-    $sql->bindValue(':email', $email);
-    $sql->execute();
-
-    if($sql->rowCount() === 0){
-            // falando a ação pro banco do que eu vou receber 
-        $sql = $pdo->prepare("INSERT INTO usuarios (nome, email) VALUES (:name, :email)");
-    
-        // Substituindo valores para quando eu inserir no form
-        $sql->bindValue(':name', $name);
-        $sql->bindValue(':email', $email);
-        $sql->execute();
+    // implementação
+    if($usuarioDao->findByEmail($email) === false){
+        // se não achar email adiciona 
+        $novoUsuario = new Usuario();
+        $novoUsuario->setNome($name); 
+        $novoUsuario->setEmail($email);
+        // Retorna o objeto usuario inteiro
+        $usuarioDao->add( $novoUsuario );
 
         header("Location: index.php");
         exit;
-    }
-    else{
+    } else{
         header("Location: adicionar.php");
         exit;
     }
