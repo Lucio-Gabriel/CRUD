@@ -48,7 +48,7 @@ class UsuarioDaoMysql implements UsuarioDAO{
         $sql->bindValue(':email', $email);
         $sql->execute();
         if($sql->rowCount() > 0){
-            $data = $sql->fetchAll();
+            $data = $sql->fetch();
 
             // instanciado o objeto
             $u = new Usuario();
@@ -64,14 +64,38 @@ class UsuarioDaoMysql implements UsuarioDAO{
     }
 
     public function findById($id){
+        $sql = $this->pdo->prepare("SELECT * FROM usuarios WHERE id = :id");
+        $sql->bindValue(':id', $id);
+        $sql->execute();
+        if($sql->rowCount() > 0){
+            $data = $sql->fetch();
 
+            // instanciado o objeto
+            $u = new Usuario();
+            $u->setId($data['id']);
+            $u->setNome($data['nome']);
+            $u->setEmail($data['email']);
+
+            return $u;
+        }else{
+            return false;
+        }
     } // Estou procurando pelo ID
-    public function update(Usuario $u){
 
+    public function update(Usuario $u){
+        $sql = $this->pdo->prepare("UPDATE usuarios SET nome = :nome, email = :email WHERE id = :id");
+        $sql->bindValue(':nome', $u->getNome());
+        $sql->bindValue(':email', $u->getEmail());
+        $sql->bindValue(':id', $u->getId());
+        $sql->execute();
+
+        return true;
     } //noosso update para manibular
     
     public function delete($id){
-
+        $sql = $this->pdo->prepare("DELETE FROM usuarios WHERE id = :id");
+        $sql->bindValue(':id', $id);
+        $sql->execute();
     } //Deleta por ID 
 
 }

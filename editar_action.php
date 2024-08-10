@@ -2,6 +2,11 @@
 
 require 'config.php';
 
+require 'dao/UsuarioDAOMySQL.php';
+
+// Instancia
+$usuarioDao = new UsuarioDaoMysql($pdo);
+
 // filtrando e pegando os valores dos meus inputs
 $id = filter_input(INPUT_POST, 'id');
 $name = filter_input(INPUT_POST, 'name');
@@ -10,14 +15,11 @@ $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
 // fazendo as verificações se os campos estão todos preenchidos
 if( $id && $name && $email ){
 
-    // nossa query pra filtrar ID e mudar o email e name
-    $sql = $pdo->prepare("UPDATE usuarios SET nome = :name, email = :email WHERE id = :id");
-    // trocando os dados
-    $sql->bindValue(':name', $name);
-    $sql->bindValue(':email', $email);
-    $sql->bindValue(':email', $email);
-    $sql->bindValue(':id', $id);
-    $sql->execute();
+    $usuario = $usuarioDao->findById($id);
+    $usuario->setNome($name);
+    $usuario->setEmail($email);
+
+    $usuarioDao->update( $usuario );
 
     header("Location: index.php");
     exit;
@@ -25,6 +27,6 @@ if( $id && $name && $email ){
 }
 else{
     // caso não preencha nada ou preencha errado ele destroi o programa e retorna pra pag de form
-    header("Location: adicionar.php");
+    header("Location: editar.php?id=".$id);
     exit;
 }

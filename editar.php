@@ -2,31 +2,23 @@
 
 require 'config.php';
 
-// vai conter as informação do user
-$info = [];
+require 'dao/UsuarioDAOMySQL.php';
+
+// Instancia
+$usuarioDao = new UsuarioDaoMysql($pdo);
+
+$usuario = false;
 
 // verificando ID
 $id = filter_input(INPUT_GET, 'id');
+
 // verificando se foi enviado algum dado
 if($id){
+    $usuario = $usuarioDao->findById($id);
+}
 
-    // procurando o id
-    $sql = $pdo->prepare("SELECT * FROM usuarios WHERE id = :id");
-    // substituindo os dados
-    $sql->bindValue(':id', $id);
-    $sql->execute();
-
-    // verificando os dados
-    if($sql->rowCount() > 0){
-
-        $info = $sql->fetch( PDO::FETCH_ASSOC );
-    }
-    else{
-        header("Location: index.php");
-        exit;
-    }
-
-}else {
+// se usuario for igual false
+if($usuario === false){
     header("Location: index.php");
     exit;
 }
@@ -35,7 +27,7 @@ if($id){
 <form method="POST" action="editar_action.php">
 
 <!-- mandando o ID por uum campo oculto -->
- <input type="hidden" name="id" value="<?=$info['id'];?>"/>
+ <input type="hidden" name="id" value="<?=$usuario->getId();?>"/>
 
 <!-- form de login -->
 
@@ -43,12 +35,12 @@ if($id){
 
     <label>
         Nome:<br/>
-        <input type="text" name="name" value="<?=$info['nome'];?>"/>
+        <input type="text" name="name" value="<?=$usuario->getNome();?>"/>
     </label><br/><br/>
 
     <label>
         E-mail:<br/>
-        <input type="email" name="email" value="<?=$info['email'];?>"/>
+        <input type="email" name="email" value="<?=$usuario->getEmail();?>"/>
     </label><br/></br>
 
     <input type="submit" value="Salvar" />
